@@ -10,11 +10,10 @@ import (
 	"strconv"
 )
 
-const NUMBER_MAPPER = 3
-const MAX_WORD = 1000
-const INITIAL_PORT = 54000
-const PORT_REDUCER = 55000
-const DEBUG = true
+const NUMBER_MAPPER = 2
+const INITIAL_PORT = 54005
+const PORT_REDUCER = 55001
+const DEBUG = false
 
 type Input struct {
 	Word string
@@ -47,6 +46,7 @@ func openAndSplit(file string) ([NUMBER_MAPPER]string, *os.File) {
 
 	var lines []string
 	scanner := bufio.NewScanner(f)
+	//split text in sentence (end with "\n")
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text()+"\n")
 
@@ -132,6 +132,8 @@ func (a *API) Grep(input Input, reply *string) error {
 
 	var v string
 	var ok bool
+	var v1 string
+
 	//listen on thread mapper channel until all mapper have terminated
 	for i := 0; i < NUMBER_MAPPER; i++ {
 
@@ -139,7 +141,7 @@ func (a *API) Grep(input Input, reply *string) error {
 		if ok == false {
 			break
 		}
-
+		v1 += v
 		if DEBUG {
 			fmt.Printf("Main Thread (%d) has received '%s' in\n%s\n", os.Getpid(), input.Word, v)
 		}
@@ -149,7 +151,7 @@ func (a *API) Grep(input Input, reply *string) error {
 	//(empty)
 
 	//reducer with RPC
-	go threadReducer(port, v, chMapper)
+	go threadReducer(port, v1, chMapper)
 	vt, err := <-chMapper
 	if !err {
 		log.Fatal("Error in API.Reducer: ", err)
