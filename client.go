@@ -15,14 +15,14 @@ type Input struct {
 func main() {
 
 	if len(os.Args) != 4 {
-		fmt.Printf("Distributed Grep Client 1.0\nUsage: go run client.go [word] [file] [port]\n")
+		fmt.Printf("Distributed Grep Client 1.0\nUsage: go run client.go [word] [file] [port server]\n")
 		os.Exit(1)
 	}
 
 	file := os.Args[2]
 	word := os.Args[1]
 
-	var returnValue int
+	var returnValue string
 
 	client, err := rpc.Dial("tcp", "localhost:"+os.Args[3])
 
@@ -37,5 +37,5 @@ func main() {
 		log.Fatal("Error in API.Grep: ", err)
 	}
 
-	fmt.Printf("Number of occurences for '%s' in '%s' is %d\n", word, file, returnValue)
+	fmt.Printf("Senteces that contain '%s' are:%s\n", word, returnValue)
 }
