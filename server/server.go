@@ -10,9 +10,10 @@ import (
 	"strconv"
 )
 
-const NUMBER_MAPPER = 2
+const NUMBER_MAPPER = 3
 const MAX_WORD = 1000
-const INITIAL_PORT = 54322
+const INITIAL_PORT = 54000
+const PORT_REDUCER = 55000
 const DEBUG = true
 
 type Input struct {
@@ -25,6 +26,11 @@ type API int
 type Couple struct {
 	Key   string
 	Value int
+}
+
+type MapperInput struct {
+	Text string
+	Word string
 }
 
 func openAndSplit(file string) ([NUMBER_MAPPER]string, *os.File) {
@@ -42,7 +48,8 @@ func openAndSplit(file string) ([NUMBER_MAPPER]string, *os.File) {
 	var lines []string
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		lines = append(lines, scanner.Text()+"\n")
+
 	}
 
 	//divide array into NUMBER_MAPPER parts
@@ -66,10 +73,10 @@ func openAndSplit(file string) ([NUMBER_MAPPER]string, *os.File) {
 
 }
 
-func threadMapper(mapperPort int, sentence string, ch chan Couple, id int) {
+func threadMapper(mapperPort int, sentence string, ch chan string, id int, word string) {
 
 	//assign each part to a mapper with RPC
-	var returnValue [MAX_WORD]Couple
+	var returnValue string
 
 	mapper, err := rpc.Dial("tcp", "localhost:"+strconv.Itoa(mapperPort))
 	defer mapper.Close()
@@ -78,54 +85,63 @@ func threadMapper(mapperPort int, sentence string, ch chan Couple, id int) {
 		log.Fatal("Connection error: ", err)
 	}
 
-	err = mapper.Call("API.Mapper", sentence, &returnValue)
+	input := MapperInput{Text: sentence, Word: word}
+
+	err = mapper.Call("API.Mapper", input, &returnValue)
 	if err != nil {
 		log.Fatal("Error in API.Mapper: ", err)
 	}
 
-	fmt.Printf("Thread %d Running\n", id)
-
-	for i := 0; i < MAX_WORD; i++ {
-
-		if returnValue[i].Value != 1 {
-			break
-		}
-		if DEBUG {
-			fmt.Printf("(%d, %s, %d)\n", id, returnValue[i].Key, returnValue[i].Value)
-		}
-	}
-
-	for i := 0; i < MAX_WORD; i++ {
-
-		ch <- returnValue[i]
-	}
+	ch <- returnValue
 }
 
+func threadReducer(mapperPort int, input string, ch chan string) {
+
+	//assign each part to a mapper with RPC
+	var returnValue string
+
+	mapper, err := rpc.Dial("tcp", "localhost:"+strconv.Itoa(PORT_REDUCER))
+	defer mapper.Close()
+
+	if err != nil {
+		log.Fatal("Connection error: ", err)
+	}
+
+	err = mapper.Call("API.Reducer", input, &returnValue)
+	if err != nil {
+		log.Fatal("Error in API.Reducer: ", err)
+	}
+
+	ch <- returnValue
+
+}
 func (a *API) Grep(input Input, reply *string) error {
 
 	arrays, _ := openAndSplit(input.File)
 
-	chMapper := make(chan Couple)
+	chMapper := make(chan string)
 	defer close(chMapper)
 
 	port := INITIAL_PORT
 	for i := 0; i < NUMBER_MAPPER; i++ {
 
-		go threadMapper(port, arrays[i], chMapper, i)
+		go threadMapper(port, arrays[i], chMapper, i, input.Word)
 		port += 1
 
 	}
 
+	var v string
+	var ok bool
 	//listen on thread mapper channel until all mapper have terminated
-	for i := 0; i < NUMBER_MAPPER*MAX_WORD; i++ {
+	for i := 0; i < NUMBER_MAPPER; i++ {
 
-		v, ok := <-chMapper
+		v, ok = <-chMapper
 		if ok == false {
 			break
 		}
 
-		if DEBUG && v.Value == 1 {
-			fmt.Printf("Main Thread: (%d, %s, %d)\n", os.Getpid(), v.Key, v.Value)
+		if DEBUG {
+			fmt.Printf("Main Thread (%d) has received '%s' in\n%s\n", os.Getpid(), input.Word, v)
 		}
 	}
 
@@ -133,9 +149,13 @@ func (a *API) Grep(input Input, reply *string) error {
 	//(empty)
 
 	//reducer with RPC
-	//...
+	go threadReducer(port, v, chMapper)
+	vt, err := <-chMapper
+	if !err {
+		log.Fatal("Error in API.Reducer: ", err)
+	}
 
-	*reply = "ciao"
+	*reply = vt
 	return nil
 
 }

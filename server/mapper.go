@@ -17,17 +17,26 @@ type Couple struct {
 	Value int
 }
 
-func (a *API) Mapper(sentence string, reply *[1000]Couple) error {
+type MapperInput struct {
+	Text string
+	Word string
+}
 
-	v := strings.Split(sentence, " ")
-	var couple Couple
+const DEBUG = true
+
+func (a *API) Mapper(input MapperInput, reply *string) error {
+
+	v := strings.Split(input.Text, "\n")
 	len := len(v)
 	for i := 0; i < len; i++ {
 
-		couple.Key = v[i]
-		couple.Value = 1
-
-		reply[i] = couple
+		count := strings.Count(v[i], input.Word)
+		if count != 0 {
+			if DEBUG {
+				fmt.Printf("Mapper (%d) has founded '%s' in \n%s\n", os.Getpid(), input.Word, v[i])
+			}
+			*reply += v[i] + "\n"
+		}
 
 	}
 

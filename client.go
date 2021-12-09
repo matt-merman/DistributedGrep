@@ -37,5 +37,5 @@ func main() {
 		log.Fatal("Error in API.Grep: ", err)
 	}
 
-	fmt.Printf("Senteces that contain '%s' are:%s\n", word, returnValue)
+	fmt.Printf("Senteces that contain '%s' are:\n%s\n", word, returnValue)
 }
