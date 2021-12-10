@@ -2,10 +2,9 @@ version: 2
 jobs:
   build:
     machine:
-      - image: ubuntu-2004:202111-01
+      image: ubuntu-2004:202111-01
     steps:
       - checkout
-
       - run:
           name: run 
           command: make server_run
