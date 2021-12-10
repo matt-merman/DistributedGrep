@@ -1,8 +1,8 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: docker:stable-git
+    machine:
+      - image: ubuntu-2004:202111-01
     steps:
       - checkout
 
