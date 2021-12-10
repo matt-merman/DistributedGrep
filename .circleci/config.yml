@@ -1,8 +1,9 @@
-version: 2.1
+version: 2
 jobs:
   build:
-    working_directory: ~/repo
     steps:
+      - checkout
+
       - run:
-          name: Run
+          name: run 
           command: make server_run
