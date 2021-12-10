@@ -11,8 +11,8 @@ import (
 )
 
 const NUMBER_MAPPER = 2
-const INITIAL_PORT = 54005
-const PORT_REDUCER = 55001
+const INITIAL_PORT = 56008
+const PORT_REDUCER = 57001
 const DEBUG = false
 
 type Input struct {
