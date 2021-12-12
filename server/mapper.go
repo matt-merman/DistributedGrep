@@ -12,19 +12,14 @@ import (
 
 type API int
 
-type Couple struct {
-	Key   string
-	Value int
-}
-
-type MapperInput struct {
+type Input struct {
 	Text string
 	Word string
 }
 
-const DEBUG = true
+const DEBUG = false
 
-func (a *API) Mapper(input MapperInput, reply *string) error {
+func (a *API) Mapper(input Input, reply *string) error {
 
 	v := strings.Split(input.Text, "\n")
 	len := len(v)
@@ -46,8 +41,7 @@ func (a *API) Mapper(input MapperInput, reply *string) error {
 func main() {
 
 	if len(os.Args) != 2 {
-		fmt.Printf("Distributed Grep Mapper 1.0\nUsage: go run mapper.go [port]\n")
-		os.Exit(1)
+		log.Fatal("Usage: go run mapper.go [port]\n")
 	}
 
 	port, _ := strconv.Atoi(os.Args[1])
@@ -65,6 +59,6 @@ func main() {
 		log.Fatal("Listener error", err)
 	}
 
-	log.Printf("\nMapper is listening on port %d", port)
+	log.Printf("\nDistributed Grep Mapper is listening on port %d", port)
 	server.Accept(listener)
 }

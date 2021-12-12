@@ -11,11 +11,14 @@ import (
 
 type API int
 
-const DEBUG = true
+const DEBUG = false
 
 func (a *API) Reducer(input string, reply *string) error {
 
-	fmt.Printf("Reducer (%d) has received \n%s\n", os.Getpid(), input)
+	if DEBUG {
+		fmt.Printf("Reducer (%d) has received \n%s\n", os.Getpid(), input)
+	}
+
 	*reply = input
 	return nil
 }
@@ -23,8 +26,7 @@ func (a *API) Reducer(input string, reply *string) error {
 func main() {
 
 	if len(os.Args) != 2 {
-		fmt.Printf("Distributed Grep Reducer 1.0\nUsage: go run reducer.go [port]\n")
-		os.Exit(1)
+		log.Fatal("Usage: go run reducer.go [port]\n")
 	}
 
 	port, _ := strconv.Atoi(os.Args[1])
@@ -42,6 +44,6 @@ func main() {
 		log.Fatal("Listener error", err)
 	}
 
-	log.Printf("\nReducer is listening on port %d", port)
+	log.Printf("\nDistributed Grep Reducer is listening on port %d", port)
 	server.Accept(listener)
 }
