@@ -1,7 +1,7 @@
-SERVER = 59000
-MAPPER1 = 59020
-MAPPER2 = 59021
-REDUCER = 59003
+SERVER = 12345
+MAPPER1 = 12346
+MAPPER2 = 12347
+REDUCER = 12348
 
 server_run:
 
@@ -18,12 +18,12 @@ server_run:
 client_run:
 
 	go build -o client.out client.go
-	./client.out cat catas.txt $(SERVER)
+	./client.out cat cats.txt $(SERVER)
 
 kill:
 
-	pkill server.out || true
-	pkill mapper.out || true
+	pkill server.out  || true
+	pkill mapper.out  || true
 	pkill reducer.out || true
 
 clean:

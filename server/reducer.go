@@ -16,7 +16,7 @@ const DEBUG = false
 func (a *API) Reducer(input string, reply *string) error {
 
 	if DEBUG {
-		fmt.Printf("Reducer (%d) has received \n%s\n", os.Getpid(), input)
+		fmt.Printf("Reducer (%d) has received: \n%s\n", os.Getpid(), input)
 	}
 
 	*reply = input

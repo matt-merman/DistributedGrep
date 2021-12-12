@@ -10,8 +10,10 @@ import (
 	"strconv"
 )
 
-const DEBUG = false
-const NUMBER_MAPPER = 2
+const (
+	DEBUG         = false
+	NUMBER_MAPPER = 2
+)
 
 var portMapper int
 var portReducer int
@@ -34,18 +36,17 @@ func openAndSplit(name string) [NUMBER_MAPPER]string {
 		log.Fatal("Error in openAndSplit: ", err)
 	}
 
-	//----------------
-
-	var lines []string
+	var splitting []string
 	scanner := bufio.NewScanner(file)
 	//split text in sentence (end with "\n")
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text()+"\n")
+		splitting = append(splitting, scanner.Text()+"\n")
+		fmt.Printf("%s", scanner.Text()+"\n")
 
 	}
 
 	//divide array into NUMBER_MAPPER parts
-	numberWords := len(lines)
+	numberWords := len(splitting)
 	dimensionPart := numberWords / NUMBER_MAPPER
 	initialPart := dimensionPart
 
@@ -57,7 +58,8 @@ func openAndSplit(name string) [NUMBER_MAPPER]string {
 			initialPart += dimensionPart
 			k++
 		}
-		sentences[k] += lines[i]
+		sentences[k] += splitting[i]
+
 	}
 
 	return sentences
@@ -118,7 +120,7 @@ func (a *API) Grep(input Input, reply *string) error {
 	for index := 0; index < NUMBER_MAPPER; index++ {
 
 		go threadMapper(portMapper, arrayText[index], channel, input.Word)
-		portMapper += 1
+		portMapper++
 
 	}
 
@@ -134,7 +136,7 @@ func (a *API) Grep(input Input, reply *string) error {
 		sentencesMapper += sentence
 
 		if DEBUG {
-			fmt.Printf("Main Thread (%d) has received '%s' in\n%s\n", os.Getpid(), input.Word, sentence)
+			fmt.Printf("Main Thread (%d) has received:\n%s\n", os.Getpid(), sentence)
 		}
 	}
 
