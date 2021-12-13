@@ -63,3 +63,5 @@ const NUMBER_MAPPER = 3
 A _2.2MB_ .txt file (_lorem.txt_) has been used to measure performance. Obviously the classical grep has taken less time for the execution.
 
 ![](./images/time.png)
+
+
