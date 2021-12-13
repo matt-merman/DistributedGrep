@@ -50,7 +50,7 @@ const NUMBER_MAPPER = 3
 
 ## Implementation
 
-![](./images/scheme.png)
+![](./images/scheme.jpg)
 
 >NOTICE: as you can see in the example below, the sentences are returned in random order due to a failure to manage the order in which the goroutines (_threadMapper()_) return to the _Server_ node.
 
