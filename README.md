@@ -52,12 +52,14 @@ const NUMBER_MAPPER = 3
 
 ![](./images/scheme.png)
 
+>NOTICE: as you can see in the example below, the sentences are returned in random order due to a failure to manage the order in which the goroutines (_threadMapper()_) return to the _Server_ node.
+
 ## Example
 
 ![](./images/example.png)
 
 ## Performance
 
-A _2.2MB_ .txt file (_lorem.txt_) has been used to measure performance. Obviously the classical grep has taken less time to execute.
+A _2.2MB_ .txt file (_lorem.txt_) has been used to measure performance. Obviously the classical grep has taken less time for the execution.
 
 ![](./images/time.png)
