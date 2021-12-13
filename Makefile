@@ -1,24 +1,27 @@
 SERVER = 12345
 MAPPER1 = 12346
 MAPPER2 = 12347
-REDUCER = 12348
+MAPPER3 = 12348
+REDUCER = 12349
 
 server_run:
 
-	cd ./server; go build -o mapper.out mapper.go
-	cd ./server; ./mapper.out $(MAPPER1) &
-	cd ./server; ./mapper.out $(MAPPER2) &
+	cd ./code/server; go build -o mapper.out mapper.go
+	cd ./code/server; ./mapper.out $(MAPPER1) &
+	cd ./code/server; ./mapper.out $(MAPPER2) &
+	cd ./code/server; ./mapper.out $(MAPPER3) &
 	
-	cd ./server; go build -o reducer.out reducer.go
-	cd ./server; ./reducer.out $(REDUCER) &
+	cd ./code/server; go build -o reducer.out reducer.go
+	cd ./code/server; ./reducer.out $(REDUCER) &
 
-	cd ./server; go build -o server.out server.go
-	cd ./server; ./server.out $(SERVER) $(MAPPER1) $(REDUCER) &
+	cd ./code/server; go build -o server.out server.go
+	cd ./code/server; ./server.out $(SERVER) $(MAPPER1) $(REDUCER) &
+
+	go build -o ./code/client.out ./code/client.go
 
 client_run:
 
-	go build -o client.out client.go
-	./client.out cat cats.txt $(SERVER)
+	./code/client.out cats cats.txt $(SERVER)
 
 kill:
 
@@ -29,6 +32,12 @@ kill:
 clean:
 
 	go clean
-	cd ./server; rm mapper.out; rm reducer.out; rm server.out;
-	rm client.out
+	cd ./code/server; rm mapper.out; rm reducer.out; rm server.out;
+	rm ./code/client.out
+
+grep:
+
+	cd ./code/server; cat cats.txt | grep cats
+
+
 
