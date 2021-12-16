@@ -4,7 +4,7 @@ MAPPER2 = 12347
 MAPPER3 = 12348
 REDUCER = 12349
 
-server_run:
+server_run_client_build:
 
 	cd ./code/server; go build -o mapper.out mapper.go
 	cd ./code/server; ./mapper.out $(MAPPER1) &
