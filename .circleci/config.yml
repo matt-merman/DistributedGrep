@@ -7,4 +7,4 @@ jobs:
       - checkout
       - run:
           name: run 
-          command: make server_run
+          command: make server_run_client_build

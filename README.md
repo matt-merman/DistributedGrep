@@ -28,7 +28,7 @@ Realize a distributed grep using the **MapReduce** paradigm: _Grep_ returns the 
 
 ```bash
 #Build and run server, mappers and reducer in background, and build client
-make server_run
+make server_run_client_build
 
 #Run client
 make client_run
