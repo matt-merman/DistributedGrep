@@ -1,7 +1,6 @@
 # Distributed Grep
 
 [![CircleCI](https://circleci.com/gh/matt-merman/DistributedGrep/tree/main.svg?style=svg)](https://circleci.com/gh/matt-merman/DistributedGrep/tree/main)
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/matt-merman/distributedgrep)](https://goreportcard.com/report/github.com/matt-merman/distributedgrep)
 
 ## Goal
@@ -28,8 +27,7 @@ Realize a distributed grep using the **MapReduce** paradigm: _Grep_ returns the 
 ## Running
 
 ```bash
-#Build and run server, mappers and reducer in background
-#Build client in background 
+#Build and run server, mappers and reducer in background, and build client
 make server_run
 
 #Run client
